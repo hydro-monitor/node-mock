@@ -45,12 +45,12 @@ func NewMeasurer(trigger_chan, manual_chan chan int, analyzer_chan chan float64,
 
 // takePicture takes a new picture with camera. Uses time as picture name
 func (m *Measurer) takePicture(time time.Time) (string, error) {
-	return "photo.jpeg", nil
+	return "/assets/photo.jpeg", nil
 }
 
 // takeWaterLevelMeasurement takes water level with water level module
 func (m *Measurer) takeWaterLevelMeasurement() float64 {
-	f := m.measurements[m.index]
+	f := m.measurements[m.index % len(m.measurements)]
 	m.index++
 
 	glog.Infof("Sending measurement %f to analyzer", f)
