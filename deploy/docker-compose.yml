@@ -1,0 +1,16 @@
+version: "2"
+
+services:
+  panel:
+    image: hydro-monitor/node-mock:v0.0.0
+    container_name: "node-mock"
+    env_file:
+      - .env
+    depends_on:
+      - node-mock-api-proxy
+
+  node-mock-api-proxy: # HA Proxy service
+    image: haproxy:2.0.16 # Official HAProxy image
+    container_name: "node-mock-haproxy"
+    volumes: # HAProxy configuration volume mount
+      - ".:/usr/local/etc/haproxy/haproxy.cfg:ro"

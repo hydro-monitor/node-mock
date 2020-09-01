@@ -18,6 +18,9 @@ image-node-mock:
 	go mod vendor
 	docker build -t $(IMAGE_NAME):$(IMAGE_VERSION) -f deploy/docker/Dockerfile .
 
+run-image-node-mock: image-node-mock
+	docker-compose -f deploy/docker-compose.yml up
+
 push-image-node-mock: image-node-mock
 	docker push $(IMAGE_NAME):$(IMAGE_VERSION)
 
