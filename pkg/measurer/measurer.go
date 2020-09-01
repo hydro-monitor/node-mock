@@ -1,6 +1,9 @@
 package measurer
 
 import (
+	"os"
+	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -10,6 +13,10 @@ import (
 	"github.com/hydro-monitor/node/pkg/envconfig"
 	"github.com/hydro-monitor/node/pkg/server"
 	"github.com/hydro-monitor/node/pkg/water"
+)
+
+const (
+	MEASUREMENTS_ENVVAR_NAME = "MEASUREMENTS"
 )
 
 // Measurer represents a measurer
@@ -27,12 +34,31 @@ type Measurer struct {
 	measurementToAnalyzerSendTimeout time.Duration
 }
 
+func getMeasurementsList() []float64 {
+	measurements := make([]float64, 0)
+	if value, exists := os.LookupEnv(MEASUREMENTS_ENVVAR_NAME); exists {
+		measurementsStr := strings.Split(value, ",")
+		for _, str := range measurementsStr {
+			f, err := strconv.ParseFloat(str, 64)
+			if err != nil {
+				glog.Errorf("Failed to convert string '%s' to float: %v. Skipping measurement", str, err)
+			}
+			measurements = append(measurements, f)
+		}
+		glog.Errorf("Returning measurements arr: %v.", measurements)
+		return measurements
+	}
+	defaultMeasurements := []float64{1,3,4,5,6}
+	glog.Errorf("Env var %s not found. Returning default measurements arr: %v.", MEASUREMENTS_ENVVAR_NAME, defaultMeasurements)
+	return defaultMeasurements
+}
+
 // NewMeasurer creates and returns a new measurer
 func NewMeasurer(trigger_chan, manual_chan chan int, analyzer_chan chan float64, wg *sync.WaitGroup) *Measurer {
 	env := envconfig.New()
 	return &Measurer{
 		index:                            0,
-		measurements:                     []float64{1,3,4,5,6}, // FIXME make me an env variable
+		measurements:                     getMeasurementsList(),
 		trigger_chan:                     trigger_chan,
 		analyzer_chan:                    analyzer_chan,
 		manual_chan:                      manual_chan,
