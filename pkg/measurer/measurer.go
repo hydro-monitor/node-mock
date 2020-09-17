@@ -45,11 +45,11 @@ func getMeasurementsList() []float64 {
 			}
 			measurements = append(measurements, f)
 		}
-		glog.Errorf("Returning measurements arr: %v.", measurements)
+		glog.Infof("Returning measurements arr: %v.", measurements)
 		return measurements
 	}
 	defaultMeasurements := []float64{1,3,4,5,6}
-	glog.Errorf("Env var %s not found. Returning default measurements arr: %v.", MEASUREMENTS_ENVVAR_NAME, defaultMeasurements)
+	glog.Warningf("Env var %s not found. Returning default measurements arr: %v.", MEASUREMENTS_ENVVAR_NAME, defaultMeasurements)
 	return defaultMeasurements
 }
 
