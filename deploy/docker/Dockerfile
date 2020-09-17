@@ -1,4 +1,4 @@
-FROM golang:1.11 as builder
+FROM golang:1.13 as builder
 COPY / /node-mock
 RUN cd /node-mock && make node-mock
 
